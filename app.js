@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const feedRoutes = require('./routes/feed');
 
-const MONGODB_URI = 'mongodb+srv://srgibosque:NNQ3XHX3%40!8Nyrn@cluster0.oyxb5.mongodb.net/shop?w=majority&appName=Cluster0'
+const MONGODB_URI = 'mongodb+srv://srgibosque:NNQ3XHX3%40!8Nyrn@cluster0.oyxb5.mongodb.net/messages?w=majority&appName=Cluster0'
 
 const app = express();
 
