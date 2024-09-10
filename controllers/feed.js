@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/post');
+const { request } = require('express');
 
 exports.getPosts = ((req, res, next) => {
   Post
@@ -24,12 +25,20 @@ exports.postPost = ((req, res, next) => {
     // Will throw the error and jump to the catch block
     throw error;
   }
+
+  if(!req.file){
+    const error = new Error('No image provided');
+    error.statusCode = 422;
+    throw error;
+  }
+
   const title = req.body.title;
   const content = req.body.content;
+  const imageUrl = req.file.path;
 
   const post = new Post({
     title: title,
-    imageUrl: 'images/wireframe.jpg',
+    imageUrl: imageUrl,
     content: content,
     creator: { name: 'Sergi' }
   });
