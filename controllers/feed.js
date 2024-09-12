@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/post');
+const User = require('../models/user');
 
 exports.getPosts = ((req, res, next) => {
   Post
@@ -36,21 +37,31 @@ exports.postPost = ((req, res, next) => {
   const content = req.body.content;
   const imageUrl = req.file.path;
 
+  let creator;
+
   const post = new Post({
     title: title,
     imageUrl: imageUrl,
     content: content,
-    creator: { name: 'Sergi' }
+    // Available after the auth middleware
+    creator: req.userId
   });
   // Saves the object to the db
-  post
-    .save()
+  post.save()
     .then(result => {
-      console.log(result);
-      // 201: Created successfully in the db
+      return User.findById(req.userId)
+    })
+    .then(user => {
+      //we add to the logged user the created post
+      creator = user;
+      user.posts.push(post);
+      return user.save();
+    })
+    .then(result => {
       res.status(201).json({
         message: 'Post Created successfully',
-        post: result
+        post: post,
+        creator: { _id: creator._id, name: creator.name }
       });
     })
     .catch(err => {
@@ -109,7 +120,7 @@ exports.updatePost = ((req, res, next) => {
       return post.save();
     })
     .then(result => {
-      res.status(200).json({message: 'Post updated successfully', post: result});
+      res.status(200).json({ message: 'Post updated successfully', post: result });
     })
     .catch((err) => {
       if (!err.stausCode) {
@@ -135,7 +146,7 @@ exports.deletePost = ((req, res, next) => {
       return Post.findByIdAndDelete(postId);
     })
     .then(result => {
-      res.status(200).json({message: 'Post deleted successfully', post: result});
+      res.status(200).json({ message: 'Post deleted successfully', post: result });
     })
     .catch(err => {
       if (!err.stausCode) {
