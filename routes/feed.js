@@ -11,19 +11,19 @@ const router = express.Router();
 router.get('/posts', isAuth, feedController.getPosts);
 
 // POST /feed/post
-router.post('/post', [
+router.post('/post', isAuth, [
   // middleware provided by express-validator to validate the post passed as body in the request
   body('title').trim().isLength({ min: 5 }),
   body('content').trim().isLength({ min: 5 }),
 ], feedController.postPost);
 
 // GET /feed/post/postId
-router.get('/post/:postId', feedController.getPost);
+router.get('/post/:postId', isAuth, feedController.getPost);
 
 // PUT /feed/post/postId
-router.put('/post/:postId', feedController.updatePost);
+router.put('/post/:postId', isAuth, feedController.updatePost);
 
 // DELETE /feed/post/postId
-router.delete('/post/:postId', feedController.deletePost);
+router.delete('/post/:postId', isAuth, feedController.deletePost);
 
 module.exports = router
