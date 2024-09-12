@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const multer = require('multer'); // Allows to upload files 
 
 const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
 
 const MONGODB_URI = 'mongodb+srv://srgibosque:NNQ3XHX3%40!8Nyrn@cluster0.oyxb5.mongodb.net/messages?w=majority&appName=Cluster0'
 
@@ -45,13 +46,15 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 // Middleware error. Executes every time an error is thrown
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message; // Exists by default. The message you pass to the constructor
-  res.status(status).json({ message: message });
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
 });
 
 mongoose

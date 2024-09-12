@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/post');
-const { request } = require('express');
 
 exports.getPosts = ((req, res, next) => {
   Post
