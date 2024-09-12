@@ -18,4 +18,7 @@ router.post('/post', [
 // GET /feed/post/postId
 router.get('/post/:postId', feedController.getPost);
 
+// PUT /feed/post/postId
+router.put('/post/:postId', feedController.updatePost);
+
 module.exports = router
