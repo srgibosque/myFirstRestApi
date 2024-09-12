@@ -120,3 +120,30 @@ exports.updatePost = ((req, res, next) => {
       next(err);
     });
 });
+
+exports.deletePost = ((req, res, next) => {
+  const postId = req.params.postId;
+
+  Post
+    .findById(postId)
+    .then(post => {
+      if (!post) {
+        const error = new Error('Could not find a post with this id');
+        error.statusCode = 404;
+        // Will throw the error and jump to the catch block
+        throw error;
+      }
+      return Post.findByIdAndDelete(postId);
+    })
+    .then(result => {
+      res.status(200).json({message: 'Post deleted successfully', post: result});
+    })
+    .catch(err => {
+      if (!err.stausCode) {
+        err.stausCode = 500;
+      }
+      // Will throw the app.js error middleware
+      next(err);
+    })
+
+});
