@@ -114,6 +114,14 @@ exports.updatePost = ((req, res, next) => {
         throw error;
       }
 
+      //Only continues if the post creator (id) matches the id stores in the middleware, the logged in user
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized');
+        error.statusCode = 403;
+        // Will throw the error and jump to the catch block
+        throw error;
+      }
+
       post.title = title;
       post.content = content;
       post.imageUrl = imageUrl;
@@ -143,7 +151,20 @@ exports.deletePost = ((req, res, next) => {
         // Will throw the error and jump to the catch block
         throw error;
       }
+      if (post.creator.toString() !== req.userId) {
+        const error = new Error('Not authorized');
+        error.statusCode = 403;
+        // Will throw the error and jump to the catch block
+        throw error;
+      }
       return Post.findByIdAndDelete(postId);
+    })
+    .then(result => {
+      return User.findById(req.userId);
+    }).then(user => {
+      // Makes sure once the post is deleted is removed from the user model as well
+      user.posts.pull(postId);
+      return user.save();
     })
     .then(result => {
       res.status(200).json({ message: 'Post deleted successfully', post: result });
